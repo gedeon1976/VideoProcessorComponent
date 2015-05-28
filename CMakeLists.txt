@@ -42,7 +42,7 @@ if (WIN32)
 	
 endif()
 
-find_package(Boost REQUIRED COMPONENTS thread date_time system filesystem signals)
+find_package(Boost REQUIRED COMPONENTS containers thread date_time system filesystem signals)
 
 if (Boost_FOUND)
 	include_directories(${Boost_INCLUDE_DIRS})

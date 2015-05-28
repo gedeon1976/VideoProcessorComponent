@@ -47,7 +47,7 @@ public:
 	/// Connect to the local cameras
 	/// @param[in,out] leftCamera string that saves the local address for the left camera
 	/// @param[in,out] rightCamera string that saves the local address for the right camera
-	virtual void connectToLocalCameras(string &leftCamera, string &rightCamera) = 0;
+	virtual void connectToLocalCameras(int &leftCamera, int &rightCamera) = 0;
 	
 	/// Get the video images from the cameras
 	/// @param[in,out] leftCameraURL string that saves the local address for the left camera

@@ -6,9 +6,11 @@ link_directories(${OpenCV_LIB_DIR} ${Boost_LIBRARY_DIRS})
 
 set(VideoProcessorComponent_SRCS 
 					InterfaceVideoProcessor.hpp
+					LocalVideo.h
 					VideoProcessorAccess.h
-					VideoProcessorComponent.h		
+					commonVideoProcessorComponent.h		
 					VideoProcessor.h 
+					LocalVideo.cpp
 					VideoProcessorAccess.cpp
 					VideoProcessor.cpp)
 
