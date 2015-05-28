@@ -45,6 +45,14 @@ public:
 	/// @param[in] height image height for this camera
 	void startCamera(int &cameraID, int width, int height);
 
+
+	/// set the buffer size to save the images
+	/// @param[in] bufferSize size of the circular buffer
+	void setBufferSize(int bufferSize);
+
+	/// write the received image from the camera to the buffer
+	void writeToBuffer();
+
 	/// get the last image from the camera image buffer
 	/// @param[in,out] cameraImage save the last available image	
 	void getImage(cv::Mat &cameraImage);
@@ -59,12 +67,16 @@ public:
 
 private:
 
+	cv::VideoCapture localCamera;
+								///< this is the local camera
 	int cameraID;				///< camera identification
 	int fps;					///< set the current frame per seconds for this camera
 	int width, height;			///< width and heigh of the camera image
 	std::string cameraModel;	///< save the camera model
-	boost::circular_buffer_space_optimized<cv::Mat> imageBuffer;
+	boost::circular_buffer_space_optimized<capturedFrame> imageBuffer;
 								///< image buffer
+
+	std::thread::id threadID;	///< ID for the thread that write to the buffer
 
 };
 
