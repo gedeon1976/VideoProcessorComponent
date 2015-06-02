@@ -79,7 +79,9 @@ private:
 								///< image buffer
 
 	std::thread::id threadID;	///< ID for the thread that write to the buffer
+
 	std::mutex bufferMutex;		///< mutex to share the cuffer access
+
 
 };
 

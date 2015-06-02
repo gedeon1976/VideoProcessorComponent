@@ -48,7 +48,9 @@ void LocalVideo::startCamera(int &cameraID, int width, int height){
 	}
 
 
+
 }
+
 
 // set the buffer size
 void LocalVideo::setBufferSize(int bufferSize){
@@ -80,6 +82,12 @@ void LocalVideo::writeToBuffer(){
 		bufferMutex.lock();
 
 	}
+
+
+}
+
+// set the buffer size
+void LocalVideo::setBufferSize(int bufferSize){
 
 
 }
