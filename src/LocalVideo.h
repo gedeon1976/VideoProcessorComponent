@@ -18,6 +18,8 @@ THANKS:		GOD
 
 #include "commonVideoProcessorComponent.h"
 #include <thread>
+#include <mutex>
+
 
 // include circular buffer to be used like a reconfigurable fixed size image buffer
 #include <boost\circular_buffer.hpp>
@@ -77,6 +79,7 @@ private:
 								///< image buffer
 
 	std::thread::id threadID;	///< ID for the thread that write to the buffer
+	std::mutex bufferMutex;		///< mutex to share the cuffer access
 
 };
 

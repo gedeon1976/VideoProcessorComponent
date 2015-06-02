@@ -3,6 +3,9 @@
 
 LocalVideo::LocalVideo()
 {
+	// set the size of the circular buffer
+	imageBuffer.clear();
+	
 }
 
 
@@ -50,6 +53,7 @@ void LocalVideo::startCamera(int &cameraID, int width, int height){
 // set the buffer size
 void LocalVideo::setBufferSize(int bufferSize){
 
+	imageBuffer.set_capacity(bufferSize);
 
 }
 
@@ -70,7 +74,10 @@ void LocalVideo::writeToBuffer(){
 		currentFrame.copyTo(actualCapturedFrame.image);
 		actualCapturedFrame.timeofCapture = std::chrono::system_clock::now();
 		
-		// write to the buffer
+		// write to the buffer using a lock guard mutex to sure correct memory management
+		bufferMutex.try_lock();
+		imageBuffer.push_back(actualCapturedFrame);
+		bufferMutex.lock();
 
 	}
 
@@ -80,7 +87,12 @@ void LocalVideo::writeToBuffer(){
 // get the last available image
 void LocalVideo::getImage(cv::Mat &imageCamera){
 
-
+	capturedFrame currentCapturedFrame;
+	
+	// read from the buffer using a lock guard mutex to sure correct memory management
+	std::lock_guard<std::mutex> Guard(bufferMutex);
+	currentCapturedFrame = imageBuffer.front();		// get the last image from circular buffer
+	currentCapturedFrame.image.copyTo(imageCamera);
 }
 
 // set the frame rate for the camera
