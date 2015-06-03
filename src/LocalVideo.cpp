@@ -27,12 +27,14 @@ void LocalVideo::getCameraName(std::string &cameraName){
 }
 
 // connect to the camera and start the image grabbing
-void LocalVideo::startCamera(int &cameraID, int width, int height){
+void LocalVideo::startCamera(int &cameraID, double width, double height){
 
 	
 	// setup the camera
+	localCamera.set(cv::CAP_PROP_FRAME_WIDTH, width);
+	localCamera.set(cv::CAP_PROP_FRAME_HEIGHT, height);
+	localCamera.set(cv::CAP_PROP_FPS, frameRate);
 
-	
 	// open the selected camera
 	localCamera.open(cameraID);
 	if (localCamera.isOpened){
@@ -106,6 +108,7 @@ void LocalVideo::getImage(cv::Mat &imageCamera){
 // set the frame rate for the camera
 void LocalVideo::setFrameRate(int &fps){
 
+	frameRate = fps;
 
 }
 

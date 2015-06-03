@@ -45,7 +45,7 @@ public:
 	/// @param[in,out] cameraID is the ID for this camera
 	/// @param[in] width image width for this camera
 	/// @param[in] height image height for this camera
-	void startCamera(int &cameraID, int width, int height);
+	void startCamera(int &cameraID, double width, double height);
 
 
 	/// set the buffer size to save the images
@@ -72,7 +72,7 @@ private:
 	cv::VideoCapture localCamera;
 								///< this is the local camera
 	int cameraID;				///< camera identification
-	int fps;					///< set the current frame per seconds for this camera
+	double frameRate;			///< set the current frame per seconds for this camera
 	int width, height;			///< width and heigh of the camera image
 	std::string cameraModel;	///< save the camera model
 	boost::circular_buffer_space_optimized<capturedFrame> imageBuffer;
