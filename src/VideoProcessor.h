@@ -1,5 +1,6 @@
 
 #include "InterfaceVideoProcessor.hpp"
+#include "Localvideo.h"
 
 using namespace std;
 
@@ -19,7 +20,10 @@ public:
 	
 private:
 	
-		string leftCamera, rightCamera;
-		cv::Mat leftImage, rightImage;
+	int imageWidth, imageHeight;
+	LocalVideo leftCameraVideo, rightCameraVideo;
+	string leftCameraURL, rightCameraURL;
+	cv::Mat leftImage, rightImage;
+
 	
 };

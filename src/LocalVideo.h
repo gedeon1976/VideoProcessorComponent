@@ -61,7 +61,7 @@ public:
 
 	/// set the desired frame rate for the camera
 	/// @param[in,out] fps seth the frame per second for this camera, here there will be camera real capacities
-	void setFrameRate(int &fps);
+	void setFrameRate(double &fps);
 
 	/// stop the camera
 	void stopCamera();

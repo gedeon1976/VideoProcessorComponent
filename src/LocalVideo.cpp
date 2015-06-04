@@ -103,7 +103,7 @@ void LocalVideo::getImage(cv::Mat &imageCamera){
 }
 
 // set the frame rate for the camera
-void LocalVideo::setFrameRate(int &fps){
+void LocalVideo::setFrameRate(double &fps){
 
 	frameRate = fps;
 
