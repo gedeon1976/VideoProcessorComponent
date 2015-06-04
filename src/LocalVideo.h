@@ -75,12 +75,14 @@ private:
 	double frameRate;			///< set the current frame per seconds for this camera
 	int width, height;			///< width and heigh of the camera image
 	std::string cameraModel;	///< save the camera model
+	int bufferSize;				///< buffer size 
 	boost::circular_buffer_space_optimized<capturedFrame> imageBuffer;
 								///< image buffer
 
+	std::thread cameraThread;	///< local camera thread
 	std::thread::id threadID;	///< ID for the thread that write to the buffer
-
 	std::mutex bufferMutex;		///< mutex to share the cuffer access
+	bool stopCameraThread;		///< boolean to stop the thread, C++11 doesn`t have thread canceling
 
 
 };

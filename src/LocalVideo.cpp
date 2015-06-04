@@ -5,6 +5,7 @@ LocalVideo::LocalVideo()
 {
 	// set the size of the circular buffer
 	imageBuffer.clear();
+	stopCameraThread = false;
 	
 }
 
@@ -45,11 +46,12 @@ void LocalVideo::startCamera(int &cameraID, double width, double height){
 		// This calling will be used as the thread callable function parameter with its arguments
 		std::function<void(LocalVideo)> threadFunction = &LocalVideo::writeToBuffer;
 
-		std::thread capturingImageThread(threadFunction);
-		capturingImageThread.join();
+		// use move constructor and start the thread
+		cameraThread = std::thread(threadFunction);
+				
+		// wait for this thread!
+		cameraThread.join();
 	}
-
-
 
 }
 
@@ -69,7 +71,7 @@ void LocalVideo::writeToBuffer(){
 	std::chrono::time_point<std::chrono::system_clock> currentCapturedTime;
 	
 	// thread loop
-	for (;;){
+	while (!stopCameraThread){
 	
 		// get the current image
 		localCamera >> currentFrame;
@@ -81,18 +83,13 @@ void LocalVideo::writeToBuffer(){
 		// write to the buffer using a lock guard mutex to sure correct memory management
 		bufferMutex.try_lock();
 		imageBuffer.push_back(actualCapturedFrame);
-		bufferMutex.lock();
+		bufferMutex.lock();	
 
 	}
 
 
 }
 
-// set the buffer size
-void LocalVideo::setBufferSize(int bufferSize){
-
-
-}
 
 // get the last available image
 void LocalVideo::getImage(cv::Mat &imageCamera){
@@ -115,6 +112,6 @@ void LocalVideo::setFrameRate(int &fps){
 // stop the camera 
 void LocalVideo::stopCamera(){
 
-
+	stopCameraThread = true;
 
 }
