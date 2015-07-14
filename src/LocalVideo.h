@@ -45,19 +45,21 @@ public:
 	/// @param[in,out] cameraID is the ID for this camera
 	/// @param[in] width image width for this camera
 	/// @param[in] height image height for this camera
-	void startCamera(int &cameraID, double width, double height);
-
+	void setupCamera(int &cameraID, double width, double height);
 
 	/// set the buffer size to save the images
 	/// @param[in] bufferSize size of the circular buffer
 	void setBufferSize(int bufferSize);
 
 	/// write the received image from the camera to the buffer
-	void writeToBuffer();
+	void writeToBuffer(void);
 
 	/// get the last image from the camera image buffer
 	/// @param[in,out] cameraImage save the last available image	
 	void getImage(cv::Mat &cameraImage);
+
+	/// get the next image from the camera
+	void nextImage(void);
 
 	/// set the desired frame rate for the camera
 	/// @param[in,out] fps seth the frame per second for this camera, here there will be camera real capacities
@@ -69,7 +71,7 @@ public:
 
 private:
 
-	cv::VideoCapture localCamera;
+	cv::VideoCapture inputCapture;
 								///< this is the local camera
 	int cameraID;				///< camera identification
 	double frameRate;			///< set the current frame per seconds for this camera

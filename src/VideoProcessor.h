@@ -13,7 +13,7 @@ public:
 		
 		void Init(bool &init);
 		
-		void connectToRemoteCameras(string &leftCameraURL, string &rightCameraURL);	
+		void connectToRemoteCameras(std::string &leftCameraURL, std::string &rightCameraURL);	
 		void connectToLocalCameras(int &leftCamera, int &rightCamera);	
 		void getVideoImages(cv::Mat &leftImage, cv::Mat &rightImage);
 		void calibrateCameras(bool calibrationFlag);	

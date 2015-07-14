@@ -12,7 +12,7 @@ void VideoProcessor::Init(bool &Init){
 }
 
 // connect to the remote cameras
-void VideoProcessor::connectToRemoteCameras(string &leftCameraURL, string &rightCameraURL){
+void VideoProcessor::connectToRemoteCameras(std::string &leftCameraURL, std::string &rightCameraURL){
 	
 	
 }
@@ -34,9 +34,12 @@ void VideoProcessor::connectToLocalCameras(int &leftCamera, int &rightCamera){
 	rightCameraVideo.setBufferSize(bufferSize);
 	rightCameraVideo.setFrameRate(desiredFps);
 
+	// setup the cameras
+	leftCameraVideo.setupCamera(leftCamera, imageWidth, imageHeight);
+	rightCameraVideo.setupCamera(rightCamera,imageWidth,imageHeight);	
+
 	// start threads for cameras images capturing
-	leftCameraVideo.startCamera(leftCamera, imageWidth, imageHeight);
-	rightCameraVideo.startCamera(rightCamera,imageWidth,imageHeight);	
+
 	
 }
 

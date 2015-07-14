@@ -42,7 +42,7 @@ public:
 	/// Connect to the remote cameras
 	/// @param[in,out] leftCameraURL string that saves the remote address for the left camera
 	/// @param[in,out] rightCameraURL string that saves the remote address for the right camera
-	virtual void connectToRemoteCameras(string &leftCameraURL, string &rightCameraURL) = 0;
+	virtual void connectToRemoteCameras(std::string &leftCameraURL, std::string &rightCameraURL) = 0;
 	
 	/// Connect to the local cameras
 	/// @param[in,out] leftCamera string that saves the local address for the left camera
