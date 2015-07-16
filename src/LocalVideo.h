@@ -17,6 +17,7 @@ THANKS:		GOD
 #pragma once
 
 #include "commonVideoProcessorComponent.h"
+#include <functional>
 #include <thread>
 #include <mutex>
 
@@ -31,6 +32,7 @@ class LocalVideo
 {
 public:
 	LocalVideo();
+	LocalVideo(const LocalVideo&);
 	~LocalVideo();
 
 	/// set the camera name
@@ -56,10 +58,10 @@ public:
 
 	/// get the last image from the camera image buffer
 	/// @param[in,out] cameraImage save the last available image	
-	void getImage(cv::Mat &cameraImage);
+	void getImage(capturedFrame &cameraImage);
 
 	/// get the next image from the camera
-	void nextImage(void);
+	cv::Mat nextImage(void);
 
 	/// set the desired frame rate for the camera
 	/// @param[in,out] fps seth the frame per second for this camera, here there will be camera real capacities
@@ -80,10 +82,8 @@ private:
 	int bufferSize;				///< buffer size 
 	boost::circular_buffer_space_optimized<capturedFrame> imageBuffer;
 								///< image buffer
-
-	std::thread cameraThread;	///< local camera thread
-	std::thread::id threadID;	///< ID for the thread that write to the buffer
-	std::mutex bufferMutex;		///< mutex to share the cuffer access
+		
+	std::mutex bufferMutex;		///< mutex to share the buffer access
 	bool stopCameraThread;		///< boolean to stop the thread, C++11 doesn`t have thread canceling
 
 

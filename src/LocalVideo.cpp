@@ -5,10 +5,14 @@ LocalVideo::LocalVideo()
 {
 	// set the size of the circular buffer
 	imageBuffer.clear();
-	//stopCameraThread = false;
-	
+	stopCameraThread = false;	
 }
 
+// Add the copy constructor to avoid copy the std::mutex that is not copyable
+LocalVideo::LocalVideo(const LocalVideo&)
+{
+
+}
 
 LocalVideo::~LocalVideo()
 {
@@ -36,23 +40,6 @@ void LocalVideo::setupCamera(int &cameraID, double width, double height){
 	inputCapture.set(cv::CAP_PROP_FRAME_HEIGHT, height);
 	inputCapture.set(cv::CAP_PROP_FPS, frameRate);
 
-	//// open the selected camera
-	//localCamera.open(cameraID);
-	//if (localCamera.isOpened()){
-
-	//	// create a thread for reading the frames and write to the image buffer
-
-	//	// store a call to the member function used for writing image data. 
-	//	// This calling will be used as the thread callable function parameter with its arguments
-	//	std::function<void(LocalVideo)> threadFunction = &LocalVideo::writeToBuffer;
-
-	//	// use move constructor and start the thread
-	//	cameraThread = std::thread(threadFunction, this);
-	//			
-	//	// wait for this thread!
-	//	cameraThread.join();
-	//}
-
 }
 
 
@@ -66,52 +53,51 @@ void LocalVideo::setBufferSize(int bufferSize){
 // write to the buffer
 void LocalVideo::writeToBuffer(void){
 
-	//capturedFrame actualCapturedFrame;
-	//cv::Mat currentFrame;
-	//std::chrono::time_point<std::chrono::system_clock> currentCapturedTime;
+	capturedFrame actualCapturedFrame;
+	cv::Mat currentFrame;
+	std::chrono::time_point<std::chrono::system_clock> currentCapturedTime;
 	
-	//// thread loop
-	//while (!stopCameraThread){
-	//
-	//	// get the current image
-	//	localCamera >> currentFrame;
+	/// thread loop
+	while (!stopCameraThread){
+	
+		// get the current image
+		currentFrame = nextImage();
 
-	//	// save the captured frame
-	//	currentFrame.copyTo(actualCapturedFrame.image);
-	//	actualCapturedFrame.timeofCapture = std::chrono::system_clock::now();
-	//	
-	//	// write to the buffer using a lock guard mutex to keep a correct memory management
-	//	bufferMutex.try_lock();
-	//	imageBuffer.push_back(actualCapturedFrame);
-	//	bufferMutex.lock();	
+		// save the captured frame
+		currentFrame.copyTo(actualCapturedFrame.image);
+		actualCapturedFrame.timeofCapture = std::chrono::system_clock::now();
+		
+		// write to the buffer using a lock guard mutex to keep a correct memory management
+		bufferMutex.lock();
+		imageBuffer.push_back(actualCapturedFrame);
+		bufferMutex.unlock();	
 
-	//}
+	}
 }
 
 // get the last available image
-void LocalVideo::getImage(cv::Mat &imageCamera){
+void LocalVideo::getImage(capturedFrame &imageCamera){
+
+	capturedFrame actualFrame;
 
 	// read from the buffer using a lock guard mutex to keep a correct memory management
-	//std::lock_guard<std::mutex> Guard(bufferMutex);
-	//currentCapturedFrame = imageBuffer.front();		// get the last image from circular buffer
-	//currentCapturedFrame.image.copyTo(imageCamera);
+	std::lock_guard<std::mutex> lock(bufferMutex);
+	//bufferMutex.lock();
+	actualFrame = imageBuffer.front();		// get the last image from circular buffer
+	imageCamera = actualFrame;
+	//bufferMutex.unlock();
 }
 
 // get the next image
-void LocalVideo::nextImage(void){
+cv::Mat LocalVideo::nextImage(void){
 
-	capturedFrame currentCapturedFrame;
-	std::chrono::time_point<std::chrono::system_clock> currentCapturedTime;
-
+	cv::Mat currentImage;
 	if (inputCapture.isOpened())
 	{
-		cv::Mat currentImage;
 		inputCapture >> currentImage;
-		currentImage.copyTo(currentCapturedFrame.image);
-		currentCapturedFrame.timeofCapture = std::chrono::system_clock::now();
-		imageBuffer.push_back(currentCapturedFrame);
-	}
 
+	}
+	return currentImage;
 }
 
 // set the frame rate for the camera
@@ -124,6 +110,6 @@ void LocalVideo::setFrameRate(double &fps){
 // stop the camera 
 void LocalVideo::stopCamera(){
 
-	//stopCameraThread = true;
+	stopCameraThread = true;
 
 }

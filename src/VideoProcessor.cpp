@@ -39,8 +39,14 @@ void VideoProcessor::connectToLocalCameras(int &leftCamera, int &rightCamera){
 	rightCameraVideo.setupCamera(rightCamera,imageWidth,imageHeight);	
 
 	// start threads for cameras images capturing
+	// assign the corresponding function for the threads
+	std::function<void(LocalVideo)>threadCapturingFunction = &LocalVideo::writeToBuffer;
 
+	std::thread leftVideoStream(threadCapturingFunction,leftCameraVideo);
+	std::thread rightVideoStream(threadCapturingFunction,rightCameraVideo);
 	
+	leftVideoStream.join();
+	rightVideoStream.join();
 }
 
 // get the video images from the cameras
