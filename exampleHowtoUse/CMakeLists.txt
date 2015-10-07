@@ -1,4 +1,4 @@
-project(testHapticComponent)
+project(testVideoProcessorComponent)
 cmake_minimum_required(VERSION 2.8)
 
 # if(NOT CMAKE_BUILD_TYPE)
@@ -22,7 +22,7 @@ find_package(OpenCV REQUIRED)
 find_package(3Dpointer REQUIRED)
 
 if (WIN32)
-  find_package(OpenHaptics REQUIRED)
+  #find_package(OpenHaptics REQUIRED)
 endif (WIN32)
 
 #find the boost libraries
@@ -48,7 +48,7 @@ if (WIN32)
 	
 endif()
 
-find_package(Boost REQUIRED COMPONENTS thread date_time system filesystem signals )
+find_package(Boost REQUIRED COMPONENTS containers thread date_time system filesystem signals )
 
 if (Boost_FOUND)
 	include_directories(${Boost_INCLUDE_DIRS})

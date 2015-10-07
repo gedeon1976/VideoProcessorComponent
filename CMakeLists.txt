@@ -24,6 +24,7 @@ set(Boost_USE_STATIC_LIBS ON)
 set(Boost_MULTITHREADED ON)
 set(Boost_USE_STATIC_RUNTIME OFF)
 set(BOOST_ROOT $ENV{BOOSTDIR})
+message("BOOST_ROOT: " ${BOOST_ROOT})
 
 if (${CMAKE_SYSTEM_PROCESSOR} STREQUAL "x86")
 	set(ARCH "32")
@@ -37,6 +38,7 @@ if (WIN32)
 	# look for vs2013 version
 	if (${MSVC12})
 			set(BOOST_LIBRARYDIR ${BOOST_ROOT}/lib${ARCH}-msvc-12.0)
+			#set(BOOST_LIBRARYDIR ${BOOST_ROOT}/lib)
 			message("BOOST_LIBRARYDIR: " ${BOOST_LIBRARYDIR})
 	endif()
 	

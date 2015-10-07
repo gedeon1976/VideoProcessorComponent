@@ -4,14 +4,16 @@
 LocalVideo::LocalVideo()
 {
 	// set the size of the circular buffer
-	imageBuffer.clear();
+	imageBuffer.set_capacity(10);
 	stopCameraThread = false;	
 }
 
 // Add the copy constructor to avoid copy the std::mutex that is not copyable
 LocalVideo::LocalVideo(const LocalVideo&)
 {
-
+	// set the size of the circular buffer
+	imageBuffer.set_capacity(10);
+	stopCameraThread = false;
 }
 
 LocalVideo::~LocalVideo()
@@ -32,14 +34,21 @@ void LocalVideo::getCameraName(std::string &cameraName){
 }
 
 // connect to the camera and start the image grabbing
-void LocalVideo::setupCamera(int &cameraID, double width, double height){
+void LocalVideo::setupCamera(int &camID, double width, double height){
 
-	
+	bool isCameraOk;
 	// setup the camera
-	inputCapture.set(cv::CAP_PROP_FRAME_WIDTH, width);
-	inputCapture.set(cv::CAP_PROP_FRAME_HEIGHT, height);
-	inputCapture.set(cv::CAP_PROP_FPS, frameRate);
-
+	//inputCapture.set(cv::CAP_PROP_FRAME_WIDTH, width);
+	//inputCapture.set(cv::CAP_PROP_FRAME_HEIGHT, height);
+	//inputCapture.set(cv::CAP_PROP_FPS, frameRate);
+	cameraID = camID;
+	////isCameraOk = inputCapture.open(cameraID);
+	//if (isCameraOk)
+	//{
+	//	cv::Mat tmpFrame;
+	//	inputCapture >> tmpFrame;
+	//}
+		
 }
 
 
@@ -53,6 +62,8 @@ void LocalVideo::setBufferSize(int bufferSize){
 // write to the buffer
 void LocalVideo::writeToBuffer(void){
 
+	
+	inputCapture.open(cameraID);
 	capturedFrame actualCapturedFrame;
 	cv::Mat currentFrame;
 	std::chrono::time_point<std::chrono::system_clock> currentCapturedTime;
@@ -92,11 +103,12 @@ void LocalVideo::getImage(capturedFrame &imageCamera){
 cv::Mat LocalVideo::nextImage(void){
 
 	cv::Mat currentImage;
-	if (inputCapture.isOpened())
-	{
-		inputCapture >> currentImage;
-
+	if (inputCapture.isOpened()) {
+		cv::Mat tmpImage;
+		inputCapture >> tmpImage;
+		tmpImage.copyTo(currentImage);
 	}
+	
 	return currentImage;
 }
 

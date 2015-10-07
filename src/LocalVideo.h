@@ -24,7 +24,7 @@ THANKS:		GOD
 
 // include circular buffer to be used like a reconfigurable fixed size image buffer
 #include <boost\circular_buffer.hpp>
-#include <boost\circular_buffer\space_optimized.hpp>
+//#include <boost\circular_buffer\space_optimized.hpp>
 
 const int DEFAULT_BUFFER_SIZE = 10;
 
@@ -47,7 +47,7 @@ public:
 	/// @param[in,out] cameraID is the ID for this camera
 	/// @param[in] width image width for this camera
 	/// @param[in] height image height for this camera
-	void setupCamera(int &cameraID, double width, double height);
+	void setupCamera(int &camID, double width, double height);
 
 	/// set the buffer size to save the images
 	/// @param[in] bufferSize size of the circular buffer
@@ -84,7 +84,7 @@ private:
 								///< image buffer
 		
 	std::mutex bufferMutex;		///< mutex to share the buffer access
-	bool stopCameraThread;		///< boolean to stop the thread, C++11 doesn`t have thread canceling
+	bool stopCameraThread;		///< boolean to stop the thread, C++11 doesn`t have thread cancelling
 
 
 };

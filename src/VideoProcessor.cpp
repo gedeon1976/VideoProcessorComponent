@@ -51,6 +51,13 @@ void VideoProcessor::connectToLocalCameras(int &leftCamera, int &rightCamera){
 
 // get the video images from the cameras
 void VideoProcessor::getVideoImages(cv::Mat &leftImage, cv::Mat &rightImage){
+
+	capturedFrame leftFrame, rightFrame;
+	leftCameraVideo.getImage(leftFrame);
+	rightCameraVideo.getImage(rightFrame);
+
+	leftFrame.image.copyTo(leftImage);
+	rightFrame.image.copyTo(rightImage);
 	
 }
 

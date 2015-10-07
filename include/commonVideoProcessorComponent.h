@@ -11,6 +11,20 @@ VideoProcessor Component
 // include OpenCV 
 #include <opencv2\core.hpp>
 #include <opencv2\calib3d.hpp>
+#include <opencv2\videoio.hpp>
+#include <opencv2\highgui.hpp>
 
-// include circular buffer to be used like a image buffer
-#include <boost\circular_buffer\space_optimized.hpp>
+
+// include c++ chrono
+#include <chrono>
+
+
+/// this structure save a captured image and the time of capturing
+struct capturedFrame
+{
+	cv::Mat image;
+	std::chrono::time_point<std::chrono::system_clock> timeofCapture;
+	
+};
+
+
