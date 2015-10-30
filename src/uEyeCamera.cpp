@@ -1,7 +1,7 @@
-#include "LocalVideo.h"
+#include "uEyeCamera.h"
 
 
-LocalVideo::LocalVideo()
+uEyeCamera::uEyeCamera()
 {
 	// set the size of the circular buffer
 	imageBuffer.set_capacity(10);
@@ -9,32 +9,40 @@ LocalVideo::LocalVideo()
 }
 
 // Add the copy constructor to avoid copy the std::mutex that is not copyable
-LocalVideo::LocalVideo(const LocalVideo&)
+uEyeCamera::uEyeCamera(const uEyeCamera&)
 {
 	// set the size of the circular buffer
 	imageBuffer.set_capacity(10);
 	stopCameraThread = false;
 }
 
-LocalVideo::~LocalVideo()
+uEyeCamera::~uEyeCamera()
 {
 }
 
+
+void uEyeCamera::startCamera(){}
+
+void uEyeCamera::selectDisplayMode(){}
+void uEyeCamera::adjustParameters(){}
+
+
+
 // set the camera name
-void LocalVideo::setCameraName(std::string &cameraName){
+void uEyeCamera::setCameraName(std::string &cameraName){
 
 	cameraModel = cameraName;
 
 }
 
 // get the camera name
-void LocalVideo::getCameraName(std::string &cameraName){
+void uEyeCamera::getCameraName(std::string &cameraName){
 
 	cameraName = cameraModel;
 }
 
 // connect to the camera and start the image grabbing
-void LocalVideo::setupCamera(int &camID, double width, double height){
+void uEyeCamera::setupCamera(int &camID, double width, double height){
 
 	bool isCameraOk;
 	// setup the camera
@@ -53,14 +61,14 @@ void LocalVideo::setupCamera(int &camID, double width, double height){
 
 
 // set the buffer size
-void LocalVideo::setBufferSize(int bufferSize){
+void uEyeCamera::setBufferSize(int bufferSize){
 
 	imageBuffer.set_capacity(bufferSize);
 
 }
 
 // write to the buffer
-void LocalVideo::writeToBuffer(void){
+void uEyeCamera::writeToBuffer(void){
 
 	
 	inputCapture.open(cameraID);
@@ -87,7 +95,7 @@ void LocalVideo::writeToBuffer(void){
 }
 
 // get the last available image
-void LocalVideo::getImage(capturedFrame &imageCamera){
+void uEyeCamera::getImage(capturedFrame &imageCamera){
 
 	capturedFrame actualFrame;
 
@@ -100,7 +108,7 @@ void LocalVideo::getImage(capturedFrame &imageCamera){
 }
 
 // get the next image
-cv::Mat LocalVideo::nextImage(void){
+cv::Mat uEyeCamera::nextImage(void){
 
 	cv::Mat currentImage;
 	if (inputCapture.isOpened()) {
@@ -113,14 +121,14 @@ cv::Mat LocalVideo::nextImage(void){
 }
 
 // set the frame rate for the camera
-void LocalVideo::setFrameRate(double &fps){
+void uEyeCamera::setFrameRate(double &fps){
 
 	frameRate = fps;
 
 }
 
 // stop the camera 
-void LocalVideo::stopCamera(){
+void uEyeCamera::stopCamera(){
 
 	stopCameraThread = true;
 

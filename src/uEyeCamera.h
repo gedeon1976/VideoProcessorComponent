@@ -32,12 +32,17 @@ THANKS:		GOD
 
 const int DEFAULT_BUFFER_SIZE = 10;
 
-class LocalVideo
+class uEyeCamera
 {
 public:
-	LocalVideo();
-	LocalVideo(const LocalVideo&);
-	~LocalVideo();
+    uEyeCamera();
+    uEyeCamera(const uEyeCamera&);
+    ~uEyeCamera();
+
+
+    void startCamera();
+    void selectDisplayMode();
+    void adjustParameters();
 
 	/// set the camera name
 	/// @param[in,out] cameraName name given to this camera
