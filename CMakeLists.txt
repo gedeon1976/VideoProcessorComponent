@@ -24,6 +24,7 @@ set(Boost_USE_STATIC_LIBS ON)
 set(Boost_MULTITHREADED ON)
 set(Boost_USE_STATIC_RUNTIME OFF)
 set(BOOST_ROOT $ENV{BOOSTDIR})
+set(Boost_ADDITIONAL_VERSIONS ON)
 message("BOOST_ROOT: " ${BOOST_ROOT})
 
 if (${CMAKE_SYSTEM_PROCESSOR} STREQUAL "x86")
@@ -43,6 +44,11 @@ if (WIN32)
 	endif()
 	
 endif()
+
+if (UNIX)
+        find_package(BOOST)
+endif()
+
 
 find_package(Boost REQUIRED COMPONENTS containers thread date_time system filesystem signals)
 
