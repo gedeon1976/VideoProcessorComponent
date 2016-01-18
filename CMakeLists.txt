@@ -23,7 +23,7 @@ find_package(OpenCV REQUIRED)
 set(Boost_USE_STATIC_LIBS ON)
 set(Boost_MULTITHREADED ON)
 set(Boost_USE_STATIC_RUNTIME OFF)
-set(BOOST_ROOT $ENV{BOOSTDIR})
+#set(BOOST_ROOT $ENV{BOOSTDIR})
 set(Boost_ADDITIONAL_VERSIONS ON)
 message("BOOST_ROOT: " ${BOOST_ROOT})
 
@@ -35,6 +35,7 @@ elseif(${CMAKE_SYSTEM_PROCESSOR} STREQUAL "x64")
 	message("Arch: "${CMAKE_SYSTEM_PROCESSOR})
 endif()
 
+#find_package(Boost 1.59.0)
 if (WIN32)
 	# look for vs2013 version
 	if (${MSVC12})
@@ -50,7 +51,7 @@ if (UNIX)
 endif()
 
 
-find_package(Boost REQUIRED COMPONENTS containers thread date_time system filesystem signals)
+find_package(Boost  COMPONENTS containers thread date_time system filesystem signals)
 
 if (Boost_FOUND)
 	include_directories(${Boost_INCLUDE_DIRS})

@@ -73,6 +73,34 @@ public:
 
 private:
 
+	INT InitCamera(HIDS *hCam, HWND hWnd);
+	bool OpenCamera();
+	void ExitCamera();
+	int  InitDisplayMode();
+	void LoadParameters();
+	void GetMaxImageSize(INT *pnSizeX, INT *pnSizeY);
+
+	HICON	m_hIcon;
+
+	// uEye varibles
+	HIDS	m_hCam;				// handle to camera
+	HWND	m_hWndDisplay;		// handle to diplay window
+	INT		m_nColorMode;		// Y8/RGB16/RGB24/REG32
+	INT		m_nBitsPerPixel;	// number of bits needed store one pixel
+	INT		m_nSizeX;			// width of image
+	INT		m_nSizeY;			// height of image
+	INT		m_nPosX;			// left offset of image
+	INT		m_nPosY;			// right offset of image
+
+	// memory needed for live display while using DIB
+	INT		m_lMemoryId;		// camera memory - buffer ID
+	char*	m_pcImageMemory;	// camera memory - pointer to buffer
+	SENSORINFO m_sInfo;			// sensor information struct
+	INT     m_nRenderMode;		// render  mode
+	INT     m_nFlipHor;			// horizontal flip flag
+	INT     m_nFlipVert;		// vertical flip flag
+
+
 	cv::VideoCapture inputCapture;
 								///< this is the local camera
 	int cameraID;				///< camera identification

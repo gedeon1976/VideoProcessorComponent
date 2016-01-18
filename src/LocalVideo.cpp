@@ -125,3 +125,41 @@ void LocalVideo::stopCamera(){
 	stopCameraThread = true;
 
 }
+
+INT LocalVideo::InitCamera(HIDS *hCam, HWND hWnd){
+
+}
+bool LocalVideo::OpenCamera(){
+
+}
+void LocalVideo::ExitCamera(){
+
+	if (m_hCam != 0)
+	{
+		// Disable messages
+		is_EnableMessage(m_hCam, IS_FRAME, NULL);
+
+		// Stop live video
+		is_StopLiveVideo(m_hCam, IS_WAIT);
+
+		// Free the allocated buffer
+		if (m_pcImageMemory != NULL)
+			is_FreeImageMem(m_hCam, m_pcImageMemory, m_lMemoryId);
+
+		m_pcImageMemory = NULL;
+
+		// Close camera
+		is_ExitCamera(m_hCam);
+		m_hCam = NULL;
+	}
+
+}
+int  LocalVideo::InitDisplayMode(){
+
+}
+void LocalVideo::LoadParameters(){
+
+}
+void LocalVideo::GetMaxImageSize(INT *pnSizeX, INT *pnSizeY){
+
+}
