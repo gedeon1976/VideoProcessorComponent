@@ -14,9 +14,11 @@ VideoProcessor Component
 #include <opencv2\videoio.hpp>
 #include <opencv2\highgui.hpp>
 
-
 // include c++ chrono
 #include <chrono>
+
+// include IDS uEye Camera
+#include "ueye.h"
 
 
 /// this structure save a captured image and the time of capturing

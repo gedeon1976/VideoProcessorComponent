@@ -73,8 +73,8 @@ public:
 
 private:
 
-	INT InitCamera(HIDS *hCam, HWND hWnd);
-	bool OpenCamera();
+	// uEye methods
+	INT OpenCamera(HIDS *hCam, HWND hWnd);
 	void ExitCamera();
 	int  InitDisplayMode();
 	void LoadParameters();
@@ -82,9 +82,9 @@ private:
 
 	HICON	m_hIcon;
 
-	// uEye varibles
+	// uEye variables
 	HIDS	m_hCam;				// handle to camera
-	HWND	m_hWndDisplay;		// handle to diplay window
+	HWND	m_hWndDisplay;		// handle to display window
 	INT		m_nColorMode;		// Y8/RGB16/RGB24/REG32
 	INT		m_nBitsPerPixel;	// number of bits needed store one pixel
 	INT		m_nSizeX;			// width of image

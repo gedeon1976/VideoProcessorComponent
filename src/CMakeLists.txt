@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
 
-include_directories(${CMAKE_CURRENT_BINARY_DIR} ${OpenCV_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS}) 
-link_directories(${OpenCV_LIB_DIR} ${Boost_LIBRARY_DIRS})
+include_directories(${CMAKE_CURRENT_BINARY_DIR} ${OpenCV_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS} ${UEYE_INCLUDE_DIRS}) 
+link_directories(${OpenCV_LIB_DIR} ${Boost_LIBRARY_DIRS} ${UEYE_LIBRARY_DIRS})
   
 
 set(VideoProcessorComponent_SRCS 

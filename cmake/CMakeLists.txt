@@ -1,1 +1,1 @@
-FILE(GLOB SRC_FILES *.cmake)
+add_subdirectory(Modules)
