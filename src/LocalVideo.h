@@ -64,17 +64,16 @@ public:
 	cv::Mat nextImage(void);
 
 	/// set the desired frame rate for the camera
-	/// @param[in,out] fps seth the frame per second for this camera, here there will be camera real capacities
+	/// @param[in,out] fps set the frame per second for this camera
 	void setFrameRate(double &fps);
 
 	/// stop the camera
 	void stopCamera();
 
-
 private:
 
 	// uEye methods
-	INT OpenCamera(HIDS *hCam, HWND hWnd);
+	INT OpenCamera(HIDS hCamID);
 	void ExitCamera();
 	int  InitDisplayMode();
 	void LoadParameters();
@@ -83,7 +82,7 @@ private:
 	HICON	m_hIcon;
 
 	// uEye variables
-	HIDS	m_hCam;				// handle to camera
+	HIDS	m_hCamID;			// cameraID
 	HWND	m_hWndDisplay;		// handle to display window
 	INT		m_nColorMode;		// Y8/RGB16/RGB24/REG32
 	INT		m_nBitsPerPixel;	// number of bits needed store one pixel
@@ -100,6 +99,7 @@ private:
 	INT     m_nFlipHor;			// horizontal flip flag
 	INT     m_nFlipVert;		// vertical flip flag
 
+	IplImage *frame;			// save the frame from uEye
 
 	cv::VideoCapture inputCapture;
 								///< this is the local camera
