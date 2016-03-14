@@ -1,6 +1,6 @@
 
 #include "InterfaceVideoProcessor.hpp"
-#include "Localvideo.h"
+#include "LocalVideo.h"
 
 using namespace std;
 

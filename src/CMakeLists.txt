@@ -22,7 +22,8 @@ set(LIBRARY_OUTPUT_PATH ${CMAKE_HOME_DIRECTORY}/lib )
 file(COPY	InterfaceVideoProcessor.hpp 
 			commonVideoProcessorComponent.h
 			VideoProcessorAccess.h 
-			VideoProcessor.h			
+			VideoProcessor.h
+			LocalVideo.h
 			DESTINATION ${CMAKE_HOME_DIRECTORY}/include)
 
 message("output directory is: " ${LIBRARY_OUTPUT_PATH})

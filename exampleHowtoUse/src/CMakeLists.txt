@@ -1,13 +1,11 @@
 cmake_minimum_required(VERSION 2.8)
 
-
-
 # include directories
 if (UNIX)
-  include_directories(${CMAKE_CURRENT_BINARY_DIR} ${OpenCV_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS} ${3DPOINTER_INCLUDE_DIR} ) 
+  include_directories(${CMAKE_CURRENT_BINARY_DIR} ${OpenCV_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS} ${3DPOINTER_INCLUDE_DIR} ${UEYE_INCLUDE_DIRS} ) 
   
 else (UNIX)
-  include_directories(${CMAKE_CURRENT_BINARY_DIR} ${OpenCV_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS} ${3DPOINTER_INCLUDE_DIR} ) 
+  include_directories(${CMAKE_CURRENT_BINARY_DIR} ${OpenCV_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS} ${3DPOINTER_INCLUDE_DIR} ${UEYE_INCLUDE_DIRS} ) 
  
 endif (UNIX)
 
@@ -19,8 +17,8 @@ set(testVideoProcessorComponent_SRCS
 add_executable(testVideoProcessorComponent ${testVideoProcessorComponent_SRCS})
 
 if (UNIX) 
-  target_link_libraries(testVideoProcessorComponent ${OpenCV_LIBS} ${Boost_LIBRARIES} ${3DPOINTER_LIBRARY})
+  target_link_libraries(testVideoProcessorComponent ${OpenCV_LIBS} ${Boost_LIBRARIES} ${3DPOINTER_LIBRARY} ${UEYE_LIBRARY_DIRS})
 endif (UNIX)
 if (WIN32)
-  target_link_libraries(testVideoProcessorComponent ${OpenCV_LIBS} ${Boost_LIBRARIES} ${3DPOINTER_LIBRARY})
+  target_link_libraries(testVideoProcessorComponent ${OpenCV_LIBS} ${Boost_LIBRARIES} ${3DPOINTER_LIBRARY} ${UEYE_LIBRARY_DIRS})
 endif (WIN32)

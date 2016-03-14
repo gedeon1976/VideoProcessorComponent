@@ -20,6 +20,7 @@ message("output directory is: " ${LIBRARY_OUTPUT_PATH})
 # find library packages
 find_package(OpenCV REQUIRED)
 find_package(3Dpointer REQUIRED)
+find_package(uEYE REQUIRED)
 
 if (WIN32)
   #find_package(OpenHaptics REQUIRED)
@@ -34,11 +35,12 @@ set(BOOST_ROOT $ENV{BOOSTDIR})
 if (${CMAKE_SYSTEM_PROCESSOR} STREQUAL "x86")
 	set(ARCH "32")
 	message("Arch: "${CMAKE_SYSTEM_PROCESSOR})
-elseif(${CMAKE_SYSTEM_PROCESSOR} STREQUAL "x64")
+elseif(${CMAKE_SYSTEM_PROCESSOR} STREQUAL "AMD64" OR ${CMAKE_SYSTEM_PROCESSOR} STREQUAL "IA64")
 	set(ARCH "64")
 	message("Arch: "${CMAKE_SYSTEM_PROCESSOR})
 endif()
 
+#find_package(Boost 1.59.0)
 if (WIN32)
 	# look for vs2013 version
 	if (${MSVC12})
@@ -48,7 +50,12 @@ if (WIN32)
 	
 endif()
 
-find_package(Boost REQUIRED COMPONENTS containers thread date_time system filesystem signals )
+if (UNIX)
+        find_package(BOOST)
+endif()
+
+
+find_package(Boost REQUIRED COMPONENTS container thread date_time system filesystem signals )
 
 if (Boost_FOUND)
 	include_directories(${Boost_INCLUDE_DIRS})
@@ -56,7 +63,6 @@ if (Boost_FOUND)
 	link_directories(${Boost_LIBRARY_DIRS})
 	message("Boost libraries dir: " ${Boost_LIBRARY_DIRS})
 endif()
- 
 	
 # add source directory
 add_subdirectory(src)
