@@ -20,7 +20,7 @@ void VideoProcessor::connectToRemoteCameras(std::string &leftCameraURL, std::str
 // connect to the local cameras
 void VideoProcessor::connectToLocalCameras(int &leftCamera, int &rightCamera){
 	
-	double desiredFps = 25;
+	double desiredFps = 59;
 	int bufferSize = 10;		//
 	string leftName("LeftCamera");
 	string rightName("RightCamera");

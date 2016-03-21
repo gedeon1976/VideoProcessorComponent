@@ -1,6 +1,7 @@
 //This project test the VideoProcessor Component
 //created with the purpose of getting connected to a
 //pair of remote or local cameras
+//at last used with uEye USB industrial cameras
 		
 #include "VideoProcessorAccess.h"
 #include <opencv2\highgui.hpp>
@@ -17,6 +18,7 @@ int main(int argc, char ** argv)
 	// Initialize component
 	bool init = true;
 	VideoProcessorComponent->Init(init);
+
 	// call the methods from the VideoProcessor Component
 	int leftID = 0;
 	int rightID = 1;
