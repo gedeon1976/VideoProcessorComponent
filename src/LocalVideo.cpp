@@ -63,7 +63,7 @@ void LocalVideo::setBufferSize(int bufferSize){
 
 }
 
-// write to the buffer
+// write to the circular buffer,the old values will be overwritten
 void LocalVideo::writeToBuffer(void){
 
 	capturedFrame actualCapturedFrame;

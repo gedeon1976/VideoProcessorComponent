@@ -18,7 +18,7 @@ VideoProcessor Component
 #include <chrono>
 
 // include IDS uEye Camera
-#include "ueye.h"
+#include <ueye.h>
 
 
 /// this structure save a captured image and the time of capturing
