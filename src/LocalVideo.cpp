@@ -6,6 +6,16 @@ LocalVideo::LocalVideo()
 	// set the size of the circular buffer
 	imageBuffer.set_capacity(10);
 	stopCameraThread = false;	
+
+	// image default values
+	width = 1280;
+	height = 1024;
+
+	// uEye default values
+	cam_ID = 0;
+	m_nBitsPerPixel = 8;
+	cameraBuffer = NULL;
+	cameraBuffer_Id = 0;
 }
 
 // Add the copy constructor to avoid copy the std::mutex that is not copyable
@@ -14,10 +24,24 @@ LocalVideo::LocalVideo(const LocalVideo&)
 	// set the size of the circular buffer
 	imageBuffer.set_capacity(10);
 	stopCameraThread = false;
+
+	// image default values
+	width = 1280;
+	height = 1024;
+
+	// uEye default values
+	cam_ID = 0;
+	cameraBuffer = NULL;
+	cameraBuffer_Id = 0;
 }
 
 LocalVideo::~LocalVideo()
 {
+	if (cameraBuffer != NULL )
+		is_FreeImageMem(cam_ID, cameraBuffer, cameraBuffer_Id);
+	
+	cameraBuffer = NULL;
+
 }
 
 // set the camera name
@@ -68,7 +92,6 @@ void LocalVideo::writeToBuffer(void){
 
 	capturedFrame actualCapturedFrame;
 	cv::Mat currentFrame;
-	std::chrono::time_point<std::chrono::system_clock> currentCapturedTime;	
 
 	/// thread loop
 	while (!stopCameraThread){
@@ -104,13 +127,19 @@ void LocalVideo::getImage(capturedFrame &imageCamera){
 // get the next image
 cv::Mat LocalVideo::nextImage(void){
 
-	cv::Mat currentImage;
-	IplImage *img = cvCreateImageHeader(cvSize(m_nSizeX, m_nSizeY), IPL_DEPTH_8U, 3);
+	INT nRet;
+	cv::Mat currentImage;	
+	
+	is_FreezeVideo(cam_ID, IS_DONT_WAIT);
+	DWORD dwRet = WaitForSingleObject(hEvent, 1000);
+	//is_GetImageMem(cam_ID, (void**)cameraBuffer);	
+	if (dwRet == WAIT_TIMEOUT){
 
-	is_FreezeVideo(m_hCamID, IS_DONT_WAIT);
-
-	img->imageData = (char*)m_pcImageMemory;
-	currentImage = cv::cvarrToMat(img);
+	}
+	else if (dwRet == WAIT_OBJECT_0){
+		frame->imageData = (char*)cameraBuffer;
+		currentImage = cv::cvarrToMat(frame);
+	}	
 
 	return currentImage;
 }
@@ -120,7 +149,7 @@ void LocalVideo::setFrameRate(double &fps){
 
 	double newFps;
 	frameRate = fps;
-	is_SetFrameRate(m_hCamID, frameRate, &newFps);
+	is_SetFrameRate(cam_ID, frameRate, &newFps);
 
 }
 
@@ -140,34 +169,40 @@ INT LocalVideo::OpenCamera(HIDS hCamID){
 	int nCurrentState = IO_LED_STATE_2;
 	
 	// init camera 
-	m_hCamID = hCamID;
-	nRet = is_InitCamera(&m_hCamID, m_hWndDisplay);// no handle window, DIB mode save to RAM memory
+	cam_ID = hCamID;
+	nRet = is_InitCamera(&cam_ID, m_hWndDisplay);// no handle window, DIB mode save to RAM memory
 												   
-
 	if (nRet == IS_SUCCESS)
 	{
 		// Get sensor info
-		is_GetSensorInfo(m_hCamID, &m_sInfo);
+		is_GetSensorInfo(cam_ID, &m_sInfo);
+
+		setWidth(m_sInfo.nMaxWidth);
+		setHeight(m_sInfo.nMaxHeight);
 
 		GetMaxImageSize(&m_nSizeX, &m_nSizeY);
 
+		nRet = InitCamera();
 		nRet = InitDisplayMode();
-		
+
+		//led to green 
+		is_IO(cam_ID, IS_IO_CMD_LED_SET_STATE, (void*)&nCurrentState, sizeof(nCurrentState));
+
+		// start live video
+		is_CaptureVideo(cam_ID, IS_WAIT);		
+	}
+	else{
+
+		return nRet;
 	}
 		
-	//led to green 
-	is_IO(m_hCamID, IS_IO_CMD_LED_SET_STATE, (void*)&nCurrentState, sizeof(nCurrentState));
 
-	// start live video
-	is_CaptureVideo(m_hCamID, IS_WAIT);
-
-	return nRet;
 	//	if (nRet == IS_SUCCESS)
 	//	{
 	//		// Enable Messages
-	//		is_EnableMessage(m_hCamID, IS_DEVICE_REMOVED, GetSafeHwnd());
-	//		is_EnableMessage(m_hCamID, IS_DEVICE_RECONNECTED, GetSafeHwnd());
-	//		is_EnableMessage(m_hCamID, IS_FRAME, GetSafeHwnd());
+	//		is_EnableMessage(cam_ID, IS_DEVICE_REMOVED, GetSafeHwnd());
+	//		is_EnableMessage(cam_ID, IS_DEVICE_RECONNECTED, GetSafeHwnd());
+	//		is_EnableMessage(cam_ID, IS_FRAME, GetSafeHwnd());
 
 
 	//	}
@@ -185,30 +220,76 @@ INT LocalVideo::OpenCamera(HIDS hCamID){
 
 }
 
+INT LocalVideo::InitCamera(){
+
+	INT nRet;
+	int width = getWidth();
+	int height = getHeight();
+	int nChannels = 3;
+	//m_nBitsPerPixel = 8;
+
+	// IplImage to save image from the uEye camera
+	frame = cvCreateImage(cvSize(width, height), IPL_DEPTH_8U, nChannels);
+
+	// Init uEye memory for the IDS driver
+	nRet = is_AllocImageMem(cam_ID, width, height, m_nBitsPerPixel, &cameraBuffer, &cameraBuffer_Id);
+
+	// active the memory to be used as a image frame buffer by the IDS driver
+	nRet = is_SetImageMem(cam_ID, cameraBuffer, cameraBuffer_Id);
+	
+	// setup IplImage
+	frame->ID = 0;
+	frame->nChannels = nChannels;
+	frame->alphaChannel = 0;
+	frame->depth = IPL_DEPTH_8U;
+	frame->dataOrder = 0;
+	frame->origin = 0;
+
+	frame->align = 1;
+	frame->width = width;
+	frame->height = height;
+	frame->roi = NULL;
+	frame->maskROI = NULL;
+	frame->imageId = NULL;
+	frame->tileInfo = NULL;
+	frame->imageSize = nChannels*width*height;
+	frame->widthStep = 4*width;
+
+	frame->imageDataOrigin = (char*)cameraBuffer;
+	frame->imageData = (char*)cameraBuffer;	
+
+	// Init frame events windows version
+	hEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
+	nRet = is_InitEvent(cam_ID, hEvent, IS_SET_EVENT_FRAME);
+	nRet = is_EnableEvent(cam_ID, IS_DONT_WAIT);
+
+	return nRet;
+}
+
 void LocalVideo::ExitCamera(){
 
 	int nCurrentState = IO_LED_STATE_1;
 
-	if (m_hCamID != 0)
+	if (cam_ID != 0)
 	{
 		// Disable messages
-		is_EnableMessage(m_hCamID, IS_FRAME, NULL);
+		is_EnableMessage(cam_ID, IS_FRAME, NULL);
 
 		// Stop live video
-		is_StopLiveVideo(m_hCamID, IS_WAIT);
+		is_StopLiveVideo(cam_ID, IS_WAIT);
 		
 		//led to orange
-		is_IO(m_hCamID, IS_IO_CMD_LED_SET_STATE, (void*)&nCurrentState, sizeof(nCurrentState));
+		is_IO(cam_ID, IS_IO_CMD_LED_SET_STATE, (void*)&nCurrentState, sizeof(nCurrentState));
 
 		// Free the allocated buffer
-		if (m_pcImageMemory != NULL)
-			is_FreeImageMem(m_hCamID, m_pcImageMemory, m_lMemoryId);
+		if (cameraBuffer != NULL)
+			is_FreeImageMem(cam_ID, cameraBuffer, cameraBuffer_Id);
 
-		m_pcImageMemory = NULL;
+		cameraBuffer = NULL;
 
 		// Close camera
-		is_ExitCamera(m_hCamID);
-		m_hCamID = NULL;
+		is_ExitCamera(cam_ID);
+		cam_ID = NULL;
 	}
 
 }
@@ -218,21 +299,21 @@ int  LocalVideo::InitDisplayMode(){
 
 	INT nRet = IS_NO_SUCCESS;
 
-	if (m_hCamID == NULL)
+	if (cam_ID == NULL)
 		return IS_NO_SUCCESS;
 
-	if (m_pcImageMemory != NULL)
-	{
-		is_FreeImageMem(m_hCamID, m_pcImageMemory, m_lMemoryId);// Free the memory 
-	}
-	m_pcImageMemory = NULL;
+	//if (cameraBuffer != NULL)
+	//{
+	//	is_FreeImageMem(cam_ID, cameraBuffer, cameraBuffer_Id);// Free the memory 
+	//}
+	//cameraBuffer = NULL;
 
 	// Set display mode to DIB
-	nRet = is_SetDisplayMode(m_hCamID, IS_SET_DM_DIB);
+	nRet = is_SetDisplayMode(cam_ID, IS_SET_DM_DIB);
 	if (m_sInfo.nColorMode == IS_COLORMODE_BAYER)
 	{
 		// setup the color depth to the current windows setting
-		is_GetColorDepth(m_hCamID, &m_nBitsPerPixel, &m_nColorMode);
+		is_GetColorDepth(cam_ID, &m_nBitsPerPixel, &m_nColorMode);
 	}
 	else if (m_sInfo.nColorMode == IS_COLORMODE_CBYCRY)
 	{
@@ -248,27 +329,21 @@ int  LocalVideo::InitDisplayMode(){
 	}
 
 	
-	if (is_AllocImageMem(m_hCamID, m_nSizeX, m_nSizeY, m_nBitsPerPixel, &m_pcImageMemory, &m_lMemoryId) != IS_SUCCESS)
-	{
-	//	//AfxMessageBox(TEXT("Memory allocation failed!"), MB_ICONWARNING);
-	//	// set a message here
-	}
-	else
-		// active the memory to save the captured image
-		is_SetImageMem(m_hCamID, m_pcImageMemory, m_lMemoryId);
-
+	//active the memory to save the captured image
+	nRet = is_SetImageMem(cam_ID, cameraBuffer, cameraBuffer_Id);
+	
 
 	if (nRet == IS_SUCCESS)
 	{
 		// set the desired color mode, here DIB,
-		is_SetColorMode(m_hCamID, m_nColorMode);
+		is_SetColorMode(cam_ID, m_nColorMode);
 
 		// set the image size to capture
 		IS_SIZE_2D imageSize;
 		imageSize.s32Width = m_nSizeX;
 		imageSize.s32Height = m_nSizeY;
 
-		is_AOI(m_hCamID, IS_AOI_IMAGE_SET_SIZE, (void*)&imageSize, sizeof(imageSize));
+		is_AOI(cam_ID, IS_AOI_IMAGE_SET_SIZE, (void*)&imageSize, sizeof(imageSize));
 	}
 
 	return nRet;
@@ -284,7 +359,7 @@ void LocalVideo::GetMaxImageSize(INT *pnSizeX, INT *pnSizeY){
 	// Only the ueye xs does not support an arbitrary AOI
 	INT nAOISupported = 0;
 	BOOL bAOISupported = TRUE;
-	if (is_ImageFormat(m_hCamID,
+	if (is_ImageFormat(cam_ID,
 		IMGFRMT_CMD_GET_ARBITRARY_AOI_SUPPORTED,
 		(void*)&nAOISupported,
 		sizeof(nAOISupported)) == IS_SUCCESS)
@@ -297,7 +372,7 @@ void LocalVideo::GetMaxImageSize(INT *pnSizeX, INT *pnSizeY){
 		// All other sensors
 		// Get maximum image size
 		SENSORINFO sInfo;
-		is_GetSensorInfo(m_hCamID, &sInfo);
+		is_GetSensorInfo(cam_ID, &sInfo);
 		*pnSizeX = sInfo.nMaxWidth;
 		*pnSizeY = sInfo.nMaxHeight;
 	}
@@ -306,10 +381,36 @@ void LocalVideo::GetMaxImageSize(INT *pnSizeX, INT *pnSizeY){
 		// Only ueye xs
 		// Get image size of the current format
 		IS_SIZE_2D imageSize;
-		is_AOI(m_hCamID, IS_AOI_IMAGE_GET_SIZE, (void*)&imageSize, sizeof(imageSize));
+		is_AOI(cam_ID, IS_AOI_IMAGE_GET_SIZE, (void*)&imageSize, sizeof(imageSize));
 
 		*pnSizeX = imageSize.s32Width;
 		*pnSizeY = imageSize.s32Height;
 	}
 
+}
+
+// set the width of the image
+void LocalVideo::setWidth(INT imageWidth){
+
+	width = imageWidth;
+}
+
+// set the height of the image
+void LocalVideo::setHeight(INT imageHeight){
+
+	height = imageHeight;
+}
+
+// get the width of the image
+INT LocalVideo::getWidth(){
+
+	INT currentWidth = width;
+	return currentWidth;
+}
+
+// get the height of the image
+INT LocalVideo::getHeight(){
+
+	INT currentHeight = height;
+	return currentHeight;
 }

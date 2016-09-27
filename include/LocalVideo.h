@@ -74,22 +74,15 @@ private:
 
 	// uEye methods
 	INT OpenCamera(HIDS hCamID);
-	INT InitCamera();
 	void ExitCamera();
 	int  InitDisplayMode();
 	void LoadParameters();
 	void GetMaxImageSize(INT *pnSizeX, INT *pnSizeY);
 
-	void setWidth(INT currentWidth);
-	void setHeight(INT currentHeight);
-
-	INT getWidth();
-	INT getHeight();
-
 	HICON	m_hIcon;
 
 	// uEye variables
-	HIDS	cam_ID;				// cameraID
+	HIDS	m_hCamID;			// cameraID
 	HWND	m_hWndDisplay;		// handle to display window
 	INT		m_nColorMode;		// Y8/RGB16/RGB24/REG32
 	INT		m_nBitsPerPixel;	// number of bits needed store one pixel
@@ -97,11 +90,10 @@ private:
 	INT		m_nSizeY;			// height of image
 	INT		m_nPosX;			// left offset of image
 	INT		m_nPosY;			// right offset of image
-	HANDLE	hEvent;				// event to get camer aimages
 
 	// memory needed for live display while using DIB
-	INT		cameraBuffer_Id;	// camera memory - buffer ID
-	char*	cameraBuffer;		// camera memory - pointer to buffer
+	INT		m_lMemoryId;		// camera memory - buffer ID
+	char*	m_pcImageMemory;	// camera memory - pointer to buffer
 	SENSORINFO m_sInfo;			// sensor information struct
 	INT     m_nRenderMode;		// render  mode
 	INT     m_nFlipHor;			// horizontal flip flag
@@ -113,7 +105,7 @@ private:
 								///< this is the local camera
 	int cameraID;				///< camera identification
 	double frameRate;			///< set the current frame per seconds for this camera
-	INT width, height;		    ///< width and heigh of the camera image
+	int width, height;			///< width and heigh of the camera image
 	std::string cameraModel;	///< save the camera model
 	int bufferSize;				///< buffer size 
 	boost::circular_buffer_space_optimized<capturedFrame> imageBuffer;
