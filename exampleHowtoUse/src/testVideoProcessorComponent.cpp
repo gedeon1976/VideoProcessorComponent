@@ -20,18 +20,23 @@ int main(int argc, char ** argv)
 	VideoProcessorComponent->Init(init);
 
 	// call the methods from the VideoProcessor Component
-	int leftID = 0;
-	int rightID = 1;
+	int leftID = 1;
+	int rightID = 2;
 	VideoProcessorComponent->connectToLocalCameras(leftID,rightID);
 	cv::Mat leftImage, rightImage;
-	
 
-	while (1)
-	{
-		VideoProcessorComponent->getVideoImages(leftImage, rightImage);
-		cv::imshow("leftImage", leftImage);
-		cv::imshow("rightImage", rightImage);
-	}
+	// wait buffer filling
+	cv::waitKey(250);
+	
+	cv::namedWindow("leftImage", cv::WINDOW_AUTOSIZE);
+	cv::namedWindow("rightImage", cv::WINDOW_AUTOSIZE);
+
+
+		VideoProcessorComponent->getVideoImages(leftImage, rightImage);		
+		//cv::imshow("leftImage", leftImage);
+		//cv::imshow("rightImage", rightImage);
+		//cv::waitKey(15);
+	
 	
 	
 	

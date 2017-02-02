@@ -15,7 +15,7 @@ IF (WIN32)
   
   find_path(UEYE_INCLUDE_DIRS ueye.h
       "/Program Files/IDS/uEye/Develop/include")
-  find_library(UEYE_LIBRARY_DIRS uEye_api uEye_tools
+  find_library(UEYE_LIBRARY_DIRS uEye_api_64 uEye_tools_64
       "/Program Files/IDS/uEye/Develop/lib/")
 
 ENDIF (WIN32)

@@ -1,11 +1,20 @@
 project(testVideoProcessorComponent)
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 2.8.11)
 
-# if(NOT CMAKE_BUILD_TYPE)
-#   set(CMAKE_BUILD_TYPE Debug CACHE STRING
-#       "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel."
-#       FORCE)
-# endif(NOT CMAKE_BUILD_TYPE)
+# Preset Directories to looking for finding libraries, cmakes, ...
+# It looks into the defined environment variables
+set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH}	$ENV{QT5_DIR}
+											$ENV{QT5_DIR}"/lib/cmake"
+											$ENV{OPENCV_DIR}
+											$ENV{BOOST_DIR}
+											$ENV{BOOST_DIR}"/lib64-msvc-14.0")
+
+ # Tell CMake to run moc when necessary:
+ set(CMAKE_AUTOMOC ON)
+ # As moc files are generated in the binary dir, tell CMake
+ # to always look for includes there:
+ set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
 
 #define the path to the cmake modules
 add_subdirectory(cmake)
@@ -21,6 +30,17 @@ message("output directory is: " ${LIBRARY_OUTPUT_PATH})
 find_package(OpenCV REQUIRED)
 find_package(3Dpointer REQUIRED)
 find_package(uEYE REQUIRED)
+find_package(Qt5 COMPONENTS Widgets Core REQUIRED)
+
+get_target_property(QtCore_location Qt5::Core LOCATION)
+
+IF (Qt5Widgets_FOUND)
+	MESSAGE("QT5 version: " ${Qt5Widgets_VERSION})
+	
+	#set the Qt libraries
+	SET(QT5_LIBRARIES Qt5::Widgets)
+	
+ENDIF()
 
 if (WIN32)
   #find_package(OpenHaptics REQUIRED)
@@ -30,29 +50,9 @@ endif (WIN32)
 set(Boost_USE_STATIC_LIBS ON)
 set(Boost_MULTITHREADED ON)
 set(Boost_USE_STATIC_RUNTIME OFF)
-set(BOOST_ROOT $ENV{BOOSTDIR})
+set(BOOST_ROOT $ENV{BOOST_ROOT})
 
-if (${CMAKE_SYSTEM_PROCESSOR} STREQUAL "x86")
-	set(ARCH "32")
-	message("Arch: "${CMAKE_SYSTEM_PROCESSOR})
-elseif(${CMAKE_SYSTEM_PROCESSOR} STREQUAL "AMD64" OR ${CMAKE_SYSTEM_PROCESSOR} STREQUAL "IA64")
-	set(ARCH "64")
-	message("Arch: "${CMAKE_SYSTEM_PROCESSOR})
-endif()
-
-#find_package(Boost 1.59.0)
-if (WIN32)
-	# look for vs2013 version
-	if (${MSVC12})
-			set(BOOST_LIBRARYDIR ${BOOST_ROOT}/lib${ARCH}-msvc-12.0)
-			message("BOOST_LIBRARYDIR: " ${BOOST_LIBRARYDIR})
-	endif()
-	
-endif()
-
-if (UNIX)
-        find_package(BOOST)
-endif()
+message("BOOST_ROOT: " ${BOOST_ROOT})
 
 
 find_package(Boost REQUIRED COMPONENTS container thread date_time system filesystem signals )

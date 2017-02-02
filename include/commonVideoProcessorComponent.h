@@ -16,9 +16,12 @@ VideoProcessor Component
 
 // include c++ chrono
 #include <chrono>
+#include <iostream>
 
 // include IDS uEye Camera
 #include <ueye.h>
+
+
 
 
 /// this structure save a captured image and the time of capturing
@@ -28,5 +31,7 @@ struct capturedFrame
 	std::chrono::time_point<std::chrono::system_clock> timeofCapture;
 	
 };
+
+
 
 

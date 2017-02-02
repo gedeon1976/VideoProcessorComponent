@@ -45,6 +45,9 @@ void VideoProcessor::connectToLocalCameras(int &leftCamera, int &rightCamera){
 	std::thread leftVideoStream(threadCapturingFunction,leftCameraVideo);
 	std::thread rightVideoStream(threadCapturingFunction,rightCameraVideo);
 	
+	//leftVideoStream.detach();
+	//rightVideoStream.detach();
+
 	leftVideoStream.join();
 	rightVideoStream.join();
 }
@@ -53,11 +56,22 @@ void VideoProcessor::connectToLocalCameras(int &leftCamera, int &rightCamera){
 void VideoProcessor::getVideoImages(cv::Mat &leftImage, cv::Mat &rightImage){
 
 	capturedFrame leftFrame, rightFrame;
-	leftCameraVideo.getImage(leftFrame);
-	rightCameraVideo.getImage(rightFrame);
 
-	leftFrame.image.copyTo(leftImage);
-	rightFrame.image.copyTo(rightImage);
+	// start threads for cameras images capturing
+	// assign the corresponding function for the threads
+	std::function<void(LocalVideo)>threadReadFunction = &LocalVideo::getImage;
+
+	std::thread leftVideoGetStream(threadReadFunction, leftCameraVideo);
+	std::thread rightVideoGetStream(threadReadFunction, rightCameraVideo);
+
+	leftVideoGetStream.detach();
+	rightVideoGetStream.detach();
+
+	//leftCameraVideo.getCurrentImage(leftFrame);
+	//rightCameraVideo.getCurrentImage(rightFrame);
+
+	//leftFrame.image.copyTo(leftImage);
+	//rightFrame.image.copyTo(rightImage);
 	
 }
 
