@@ -16,7 +16,6 @@ THANKS:		GOD
 #include <thread>
 #include <mutex>
 #include <iostream>
-//#include <qobject.h> 
 
 // include thread buffer class
 #include "Buffer.h"
@@ -31,6 +30,8 @@ using namespace std;
 const int DEFAULT_BUFFER_SIZE = 10;
 const int MAX_EVENTS = 32;
 const int SEQ_BUFFERS = 3;
+
+Q_DECLARE_METATYPE(cv::Mat);
 
 /// structure for select the display mode
 typedef enum _disp_mode
@@ -65,12 +66,12 @@ struct Camera
 	
 };
 
-class LocalVideo  //: public QObject
+class LocalVideo  : public QObject
 {
-	//Q_OBJECT
+	Q_OBJECT
 public:
 	LocalVideo();
-	//LocalVideo(LocalVideo& localVideo);
+	LocalVideo(LocalVideo& localVideo);
 	~LocalVideo();
 
 	/// set the camera name
@@ -111,8 +112,8 @@ public:
 	void stopCamera();
 
 	/// Signal to send the captured images
-//signals:
-	//void sendImage(cv::Mat currentImage); 
+signals:
+	void sendImage(cv::Mat currentImage); 
 
 
 private:

@@ -40,7 +40,9 @@ void VideoProcessor::connectToLocalCameras(int &leftCamera, int &rightCamera){
 
 	// start threads for cameras images capturing
 	// assign the corresponding function for the threads
+	
 	std::function<void(LocalVideo)>threadCapturingFunction = &LocalVideo::writeToBuffer;
+	//std::function<void(LocalVideo*)> threadCapturingFunction = std::mem_fn(&LocalVideo::writeToBuffer);
 
 	std::thread leftVideoStream(threadCapturingFunction,leftCameraVideo);
 	std::thread rightVideoStream(threadCapturingFunction,rightCameraVideo);
@@ -59,7 +61,7 @@ void VideoProcessor::getVideoImages(cv::Mat &leftImage, cv::Mat &rightImage){
 
 	// start threads for cameras images capturing
 	// assign the corresponding function for the threads
-	std::function<void(LocalVideo)>threadReadFunction = &LocalVideo::getImage;
+	std::function<void(LocalVideo&)>threadReadFunction = &LocalVideo::getImage;
 
 	std::thread leftVideoGetStream(threadReadFunction, leftCameraVideo);
 	std::thread rightVideoGetStream(threadReadFunction, rightCameraVideo);

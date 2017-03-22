@@ -190,6 +190,9 @@ void LocalVideo::writeToBuffer(void) {
 							currentFrame.copyTo(actualCapturedFrame.image);
 							actualCapturedFrame.timeofCapture = std::chrono::system_clock::now();
 
+							// emit image signal
+							emit sendImage(currentFrame);
+
 							// write to the buffer 
 							m_Camera.imageBuffer.push(actualCapturedFrame);
 							break;

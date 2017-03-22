@@ -21,8 +21,8 @@ VideoProcessor Component
 // include IDS uEye Camera
 #include <ueye.h>
 
-
-
+// include Qt 
+#include <QObject>
 
 /// this structure save a captured image and the time of capturing
 struct capturedFrame
